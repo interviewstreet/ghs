@@ -2,6 +2,7 @@ import argparse
 import datetime
 
 import colorama
+import pyperclip
 import requests
 from halo import Halo
 from requests import Session
@@ -83,7 +84,9 @@ def parse_repos(repos, user_contribution_repos):
 
 
 def print_top_contribution(final_data):
-  print(f"\nYour Top Contributions:\n")
+  text = f"\nYour Top Contributions:\n"
+  print(text)
+  output_text = text
   count = 0
   for i in final_data.keys():
     count += 1
@@ -99,24 +102,49 @@ def print_top_contribution(final_data):
     stargazer_count = final_data[i]['stargazer_count']
     fork_count = final_data[i]['fork_count']
 
+    text = f"{count}.) "
+    print(text, end="")
+    output_text += text
+
     if is_private:
-      print(f"{count}.) private repo belonging to {repo_owner}")
+      text = f"private repo belonging to {repo_owner}\n"
+      cprint(text, 'green', end="")
+      output_text += text
     else:
-      print(f"{count}.) {repo_owner}/{repo_name}")
+      text = f"{repo_owner}/{repo_name}\n"
+      cprint(text, 'green', end="")
+      output_text += text
 
     if total_commits is not None:
-      print(
-          f"\t * This repository has a total of {total_commits} commits{f' and {contributors_count} contributors' if contributors_count is not None else ''}.")
+      text = f"\t * This repository has a total of {total_commits} commits{f' and {contributors_count} contributors' if contributors_count is not None else ''}.\n"
+      print(text, end="")
+      output_text += text
     if stargazer_count > 0:
-      print(
-          f"\t * It has {stargazer_count} stars{f' and {fork_count} forks' if fork_count > 0 else ''}.")
-    print(
-        f"\t * During this period you made {individual_commit_countribution} commits to this repo.")
-    print(
-        f"\t * Top languages of the repo {languages}.")
+      text = f"\t * It has {stargazer_count} stars{f' and {fork_count} forks' if fork_count > 0 else ''}.\n"
+      print(text, end="")
+      output_text += text
+
+    text = f"\t * During this period you made {individual_commit_countribution} commits to this repo.\n\t * Top languages of the repo {languages}.\n"
+    print(text, end="")
+    output_text += text
+
+  return output_text
 
 
 def get_user_highlights(username, headers, durations, choice):
+  text = ""
+  if choice == 1:
+    text = "\nHighlights from when you joined Github.\n"
+  elif choice == 2:
+    text = "\nGithub highlights for the past 12 months\n"
+  elif choice == 3:
+    text = "\nGithub highlights\n"
+
+  cprint(text, 'magenta', attrs=['reverse', 'bold'])
+  # output_text is used to collect the text in a single string
+  # so that it can be copied to clipboard if the flag is provided
+  output_text = text
+
   for duration in durations:
     spinner.start()
     duration = duration.strip()
@@ -182,15 +210,45 @@ def get_user_highlights(username, headers, durations, choice):
     if choice == 2:
       start_duration = start_duration.split('T')[0]
 
-    cprint(f"\n{start_duration} - {end_duration}\n", color="green")
+    text = f"\n{start_duration} - {end_duration}\n"
+    output_text += text
+    cprint(text, color="cyan")
+    if (total_commit_contributions == 0):
+      text = "No code contribution during this period\n"
+      print(text, end="")
+      output_text += text
+    else:
+      text = 'During this period, you made a total of '
+      print(text, end="")
+      output_text += text
 
-    print(
-        f"During this period, you made a total of {total_pull_request_contributions} Pull requests and {total_commit_contributions} commits accross {len(repos) if len(repos) < 100 else '100+'} repositories.")
-    if (total_pull_request_review_contributions > 0):
-      print(
-          f"You also reviewed {total_pull_request_review_contributions} pull requests.")
+      text = f"{total_pull_request_contributions} Pull requests"
+      cprint(text, 'yellow', end="")
+      output_text += text
 
-    print_top_contribution(final_data)
+      text = " and "
+      print(text, end="")
+      output_text += text
+
+      text = f"{total_commit_contributions} commits "
+      cprint(text, "yellow", end="")
+      output_text += text
+
+      text = f"across {len(repos) if len(repos) < 100 else '100+'} repositories.\n"
+      print(text, end="")
+      output_text += text
+      if (total_pull_request_review_contributions > 0):
+        text = "You also "
+        print(text, end="")
+        output_text += text
+
+        text = f"reviewed {total_pull_request_review_contributions} pull requests.\n"
+        cprint(text, 'yellow')
+        output_text += text
+
+      output_text += print_top_contribution(final_data)
+
+  return output_text
 
 
 def get_general_stats(username, headers):
@@ -239,9 +297,12 @@ def get_oldest_contribution_year(username, headers):
 def main():
   parser = argparse.ArgumentParser(description="Get stats and highlights of your github profile.")
 
-  # add arguments to our CLI
   parser.add_argument(
       "-v", "--version", action="store_true", help="print cli version and exit"
+  )
+
+  parser.add_argument(
+      "-t", "--token-update", dest="token_update", action="store_true", help="update the token in config and exit"
   )
 
   parser.add_argument(
@@ -249,11 +310,11 @@ def main():
   )
 
   parser.add_argument(
-      "-t", "--token-update", dest="token_update", action="store_true", help="update the token in the config"
+      "--highlights", dest="highlights", action="store_true", help="display the highlights of user's github profile"
   )
 
   parser.add_argument(
-      "--highlights", dest="highlights", action="store_true", help="display the highlights of user's github profile"
+      "-c", "--copy-to-clipboard", dest="copy_to_clipboard", action="store_true", help="copy the output to clipboard"
   )
 
   args = parser.parse_args()
@@ -289,10 +350,14 @@ def main():
         durations = input(
             "Enter year duration in this format -> 2017-2019,2019-2021,2021-present: ")
 
-      get_user_highlights(args.username, get_headers(), durations.split(','), choice)
+      output_text = get_user_highlights(args.username, get_headers(), durations.split(','), choice)
+      if args.copy_to_clipboard:
+        pyperclip.copy(output_text)
     else:
       output_text = get_general_stats(args.username, get_headers())
       print(output_text)
+      if args.copy_to_clipboard:
+        pyperclip.copy(output_text)
   else:
     cprint(
         "Error: username not provided",
