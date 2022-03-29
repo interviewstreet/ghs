@@ -9,13 +9,13 @@ from requests import Session
 from retry_requests import retry
 from termcolor import cprint
 
-from ghstats.__init__ import __version__
-from ghstats.check_config import check_config_dir, save_token
-from ghstats.es_queries import (contribution_collection_query,
-                                contribution_years_query, general_stats_query,
-                                total_commit_query)
-from ghstats.utils import (format_date_object, get_headers, let_user_pick,
-                           subtract_years)
+from ghs.__init__ import __version__
+from ghs.check_config import check_config_dir, save_token
+from ghs.es_queries import (contribution_collection_query,
+                            contribution_years_query, general_stats_query,
+                            total_commit_query)
+from ghs.utils import (format_date_object, get_headers, let_user_pick,
+                       subtract_years)
 
 colorama.init()
 my_session = retry(Session(), retries=2, backoff_factor=10)

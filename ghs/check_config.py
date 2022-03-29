@@ -7,7 +7,7 @@ from requests import Session
 from retry_requests import retry
 from termcolor import cprint
 
-from ghstats.es_queries import viewer_query
+from ghs.es_queries import viewer_query
 
 colorama.init()
 home_dir = os.path.expanduser("~")
@@ -17,11 +17,11 @@ my_session = retry(Session(), retries=2, backoff_factor=10)
 
 
 def config_dir_path():
-  return os.path.join(home_dir, ".ghstats")
+  return os.path.join(home_dir, ".ghs")
 
 
 def config_file_path():
-  return os.path.join(config_dir_path(), "ghstats.config")
+  return os.path.join(config_dir_path(), "ghs.config")
 
 
 def check_config_dir(spnr):
@@ -29,7 +29,7 @@ def check_config_dir(spnr):
     path = config_dir_path()
     # makes path recursively. returns None if already exist.
     os.makedirs(path, exist_ok=True)
-    if not os.path.isfile(os.path.join(path, "ghstats.config")):
+    if not os.path.isfile(os.path.join(path, "ghs.config")):
       spnr.stop()
       return create_config_file()
 
@@ -62,7 +62,7 @@ def save_token():
   if request.status_code == 200:
     result = request.json()
     username = result['data']['viewer']['login']
-    print(f"Saving the token for {username} in ~/.ghstats/ghstats.config")
+    print(f"Saving the token for {username} in ~/.ghs/ghs.config")
     config["TOKEN"] = {"pat": pat}
     with open(config_file_path(), "w") as f:
       config.write(f)

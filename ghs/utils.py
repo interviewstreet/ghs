@@ -1,6 +1,6 @@
 import random
 from dateutil.relativedelta import relativedelta
-from ghstats.check_config import get_saved_token
+from ghs.check_config import get_saved_token
 
 USER_AGENTS = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko)',
