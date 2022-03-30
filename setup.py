@@ -21,7 +21,8 @@ setup(
     author="Hackerrank",
     author_email="pypi@hackerrank.com",
     keywords=['github', 'cli', 'utility', 'command', 'console'],
-    install_requires=["requests", "termcolor", "colorama", "pyperclip", "halo"],
+    install_requires=["requests", "retry_requests", "python-dateutil",
+                      "termcolor", "colorama", "pyperclip", "halo"],
     entry_points={"console_scripts": ["ghs=ghs.ghs:main"]},
     classifiers=[
         'Environment :: Console',
