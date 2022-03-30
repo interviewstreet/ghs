@@ -66,3 +66,22 @@ def let_user_pick(options):
   except:
     pass
   return None
+
+
+def parse_user_contribution_repos(repos, user_contribution_repos):
+  for repo in repos[:5]:
+    commits_count = repo['contributions']['totalCount']
+    repo_name = repo['repository']['name']
+    repo_owner = repo['repository']['owner']['login']
+    languages = repo['repository']['languages']['nodes']
+    is_private = repo['repository']['isPrivate']
+    stargazer_count = repo['repository']['stargazerCount']
+    fork_count = repo['repository']['forkCount']
+
+    if repo_name in user_contribution_repos.keys():
+      user_contribution_repos[repo_name]['commits_count'] += commits_count
+    else:
+      user_contribution_repos[repo_name] = {'owner': repo_owner, 'commits_count': commits_count,
+                                            'languages': languages, 'is_private': is_private, 'stargazer_count': stargazer_count, 'fork_count': fork_count}
+
+  return user_contribution_repos
