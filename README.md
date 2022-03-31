@@ -3,7 +3,7 @@
   <p align="center">Cross-platform CLI tool to generate your Github profile's stats and summary.<p>
   <p align="center">
     <a href="https://github.com/interviewstreet/ghs/blob/master/LICENSE">
-      <img alt="MIT License" src="https://img.shields.io/github/license/interviewstreet/ghs.svg?color=brightgreen" />
+      <img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg" />
     </a>
     <a href="https://github.com/interviewstreet/ghs/pulls">
 	    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="prs welcome">
