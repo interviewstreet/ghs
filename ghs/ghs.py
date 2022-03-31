@@ -23,12 +23,14 @@ spinner = Halo(text='Loading', spinner='dots')
 
 def verify_github_username(username):
   if fetch_user_id(username) is None:
-    raise Exception(f"Error: {username} is not a valid github username")
+    raise ValidationException(f"Error: {username} is not a valid github username")
+  spinner.stop()
 
 
 def general_stats(username):
   spinner.start()
   verify_github_username(username)
+  spinner.start()
   general_stats = fetch_general_stats(username)
   return render_general_stats(username, general_stats, spinner)
 
@@ -45,7 +47,6 @@ def validate_start_and_end_duration(start_duration, end_duration):
 
 
 def user_summary(username, durations, choice):
-  verify_github_username(username)
   text = ""
   if choice == 1:
     text = f"\nGithub summary of {username} for the past 12 months.\n"
@@ -58,6 +59,10 @@ def user_summary(username, durations, choice):
   # output_text is used to collect the text in a single string
   # so that it can be copied to clipboard if the flag is provided
   output_text = text
+
+  if choice != 2:
+    spinner.start()
+    verify_github_username(username)
 
   for duration in durations:
     spinner.start()
@@ -182,6 +187,8 @@ def main():
       if choice == 1:
         durations = f"{subtract_years(datetime.datetime.now(), 1)}#present"
       elif choice == 2:
+        spinner.start()
+        verify_github_username(args.username)
         year = fetch_oldest_contribution_year(args.username)
         durations = ""
         for val in list(range(year, datetime.date.today().year + 1)):
