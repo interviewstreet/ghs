@@ -4,7 +4,7 @@ from retry_requests import retry
 
 from ghs.es_queries import (contribution_collection_query,
                             contribution_years_query, general_stats_query,
-                            total_commit_query)
+                            total_commit_query, user_id_query)
 from ghs.utils import get_headers
 
 my_session = retry(Session(), retries=2, backoff_factor=10)
@@ -72,5 +72,19 @@ def fetch_general_stats(username):
   if request.status_code == 200:
     result = request.json()
     return result['data']['search']['nodes'][0]
+  else:
+    raise Exception(f"Query failed with status code: {request.status_code}")
+
+
+def fetch_user_id(username):
+  with my_session.post('https://api.github.com/graphql', json={'query': user_id_query(username)}, headers=get_headers()) as result:
+    request = result
+
+  if request.status_code == 200:
+    result = request.json()
+    if len(result['data']['search']['nodes']) == 0:
+      return None
+    else:
+      return result['data']['search']['nodes'][0]['id']
   else:
     raise Exception(f"Query failed with status code: {request.status_code}")

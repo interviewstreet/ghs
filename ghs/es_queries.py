@@ -137,3 +137,18 @@ def viewer_query():
       }'''
 
   return query
+
+
+def user_id_query(username):
+  query = '''{
+    search(query: NAME, type: USER, first: 1) {
+      nodes {
+        ... on User {
+          id
+        }
+      }
+    }
+  }
+  '''.replace("NAME", '"{}"'.format(username))
+
+  return query

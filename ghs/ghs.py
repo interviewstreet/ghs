@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import traceback
 
 import colorama
 import pyperclip
@@ -7,11 +8,11 @@ from halo import Halo
 from termcolor import cprint
 
 from ghs.__init__ import __version__
-from ghs.check_config import check_config_dir, save_token
+from ghs.check_config import ValidationException, check_config_dir, save_token
 from ghs.fetchers import (fetch_contribution_collection,
                           fetch_contributors_count, fetch_general_stats,
                           fetch_oldest_contribution_year,
-                          fetch_total_repo_commits)
+                          fetch_total_repo_commits, fetch_user_id)
 from ghs.utils import (format_date_object, let_user_pick,
                        parse_user_contribution_repos, subtract_years)
 from ghs.viewer import render_general_stats, render_generated_on, render_user_summary
@@ -20,13 +21,31 @@ colorama.init()
 spinner = Halo(text='Loading', spinner='dots')
 
 
+def verify_github_username(username):
+  if fetch_user_id(username) is None:
+    raise Exception(f"Error: {username} is not a valid github username")
+
+
 def general_stats(username):
   spinner.start()
+  verify_github_username(username)
   general_stats = fetch_general_stats(username)
   return render_general_stats(username, general_stats, spinner)
 
 
+def validate_start_and_end_duration(start_duration, end_duration):
+  if not start_duration.isdigit() or not end_duration.isdigit():
+    raise ValidationException("Error: duration not provided in the desired format")
+
+  if int(end_duration) <= int(start_duration):
+    raise ValidationException("Error: ending year cannot be less than starting year")
+
+  if int(end_duration) - int(start_duration) > 30:
+    raise ValidationException("Error: the year gap is too big")
+
+
 def user_summary(username, durations, choice):
+  verify_github_username(username)
   text = ""
   if choice == 1:
     text = f"\nGithub summary of {username} for the past 12 months.\n"
@@ -35,7 +54,7 @@ def user_summary(username, durations, choice):
   elif choice == 3:
     text = f"\nGithub summary of {username}\n"
 
-  cprint(text, 'magenta')
+  cprint(text, 'magenta', end="")
   # output_text is used to collect the text in a single string
   # so that it can be copied to clipboard if the flag is provided
   output_text = text
@@ -46,12 +65,15 @@ def user_summary(username, durations, choice):
     if choice == 1:
       start_duration, end_duration = duration.split('#')
     elif choice == 2 or choice == 3:
-      start_duration, end_duration = duration.split('-')
+      try:
+        start_duration, end_duration = duration.split('-')
+      except Exception:
+        raise ValidationException("Error: duration not provided in the desired format")
 
     start_duration = start_duration.strip()
     end_duration = end_duration.strip()
     if end_duration == 'present' and choice is not 1:
-      end_duration = datetime.date.today().year + 1
+      end_duration = f"{datetime.date.today().year + 1}"
 
     total_commit_contributions, total_pull_request_contributions, total_pull_request_review_contributions = [
         0, 0, 0]
@@ -63,6 +85,8 @@ def user_summary(username, durations, choice):
 
       user_contribution_repos = parse_user_contribution_repos(repos[:5], user_contribution_repos)
     elif choice == 2 or choice == 3:
+      validate_start_and_end_duration(start_duration, end_duration)
+
       for curr_year in range(int(start_duration), int(end_duration)):
         start_date = format_date_object(datetime.datetime(curr_year, 1, 1))
         repos, commit_contributions, pull_request_contributions, pull_request_review_contributions = fetch_contribution_collection(
@@ -101,7 +125,7 @@ def user_summary(username, durations, choice):
                                           'individual_commit_contribution': commits_count, 'languages': parsed_languages, 'is_private': is_private, 'stargazer_count': stargazer_count, 'fork_count': fork_count}
 
     spinner.stop()
-    if end_duration == datetime.date.today().year + 1:
+    if end_duration == f"{datetime.date.today().year + 1}":
       end_duration = 'present'
     if choice == 1:
       start_duration = start_duration.split('T')[0]
@@ -177,13 +201,19 @@ def main():
       if args.copy_to_clipboard:
         pyperclip.copy(output_text)
   else:
-    cprint(
-        "Error: username not provided",
-        color="red",
-        attrs=["bold"],
-    )
+    raise ValidationException("Error: username not provided")
+
+
+def main_proxy():
+  try:
+    main()
+  except ValidationException as e:
     spinner.stop()
-
-
-if __name__ == "__main__":
-  main()
+    cprint(e, color="red", attrs=["bold"])
+  except KeyboardInterrupt:
+    cprint("\nExiting", color="yellow")
+  except Exception as e:
+    spinner.stop()
+    cprint(f"Error: {e}", color="red", attrs=["bold"])
+    traceback_str = ''.join(traceback.format_tb(e.__traceback__))
+    print(f"Traceback: \n{traceback_str}")

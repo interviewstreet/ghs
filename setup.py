@@ -1,4 +1,5 @@
 import pathlib
+
 from setuptools import setup
 
 import ghs
@@ -23,7 +24,7 @@ setup(
     keywords=['github', 'cli', 'utility', 'command', 'console'],
     install_requires=["requests", "retry_requests", "python-dateutil",
                       "termcolor", "colorama", "pyperclip", "halo"],
-    entry_points={"console_scripts": ["ghs=ghs.ghs:main"]},
+    entry_points={"console_scripts": ["ghs=ghs.ghs:main_proxy"]},
     classifiers=[
         'Environment :: Console',
         'Intended Audience :: Developers',

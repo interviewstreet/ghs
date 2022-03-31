@@ -24,6 +24,10 @@ def config_file_path():
   return os.path.join(config_dir_path(), "ghs.config")
 
 
+class ValidationException(Exception):
+  pass
+
+
 def check_config_dir(spnr):
   try:
     path = config_dir_path()
@@ -32,7 +36,6 @@ def check_config_dir(spnr):
     if not os.path.isfile(os.path.join(path, "ghs.config")):
       spnr.stop()
       return create_config_file()
-
   except IOError:
     print("Error occured while creating config files.")
 
@@ -68,11 +71,9 @@ def save_token():
       config.write(f)
     return True
   elif request.status_code == 401:
-    print("The pat is not valid")
+    raise ValidationException("The PAT is not valid")
   else:
-    print("error in saving the pat")
-
-  return False
+    raise ValidationException("Error in saving the pat")
 
 
 def get_saved_token():
