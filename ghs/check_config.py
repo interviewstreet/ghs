@@ -1,5 +1,6 @@
 import configparser
 import os
+import requests
 
 import colorama
 from halo import Halo
@@ -51,6 +52,24 @@ def create_config_file():
   return save_token()
 
 
+# TODO: move this to fetchers after resolving circular imports
+def fetch_token_scopes(headers):
+  resp = requests.get(
+      f'https://api.github.com/rate_limit', headers=headers)
+  
+  if 'X-OAuth-Scopes' in resp.headers.keys():
+    scopes = resp.headers['X-OAuth-Scopes']
+    return scopes.split(', ')
+  else:
+    return None
+
+
+def validate_token_scopes(headers):
+  required_scopes = ['read:user', 'repo', 'read:packages']
+  token_scopes = fetch_token_scopes(headers)
+  if token_scopes is None or not set(required_scopes).issubset(token_scopes):
+    raise ValidationException(f"Error: The token does not have valid scopes. \n Required scopes: {required_scopes}. \n Provided token scopes: {token_scopes} ")
+
 def save_token():
   pat = input("please enter your github pat: ")
 
@@ -65,6 +84,7 @@ def save_token():
   if request.status_code == 200:
     result = request.json()
     username = result['data']['viewer']['login']
+    validate_token_scopes(headers)
     print(f"Saving the token for {username} in ~/.ghs/ghs.config")
     config["TOKEN"] = {"pat": pat}
     with open(config_file_path(), "w") as f:
