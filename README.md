@@ -88,6 +88,12 @@ _Note_: You need to reinstall by running the pip command if you want the cli to 
 
 Generate a Github personal access token (https://github.com/settings/tokens) and use the `ghs -t` command to save it in the config file. This will be used to make the API requests to Github. A happy side-effect of this is that your private contributions are also considered while generating the stats and the summary of your username.
 
+Please make sure that you give the following scopes to the token:
+
+- `repo`
+- `read:user`
+- `read:packages`
+
 PS: Your Github PAT is not comprimised by ghs. Please read the [Privacy Notice](#privacy-notice) to know more.
 
 ## Usage
