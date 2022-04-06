@@ -172,7 +172,8 @@ def main():
     exit(0)
 
   if args.token_update:
-    save_token()
+    if not check_config_dir(spinner):
+      exit(1)
     exit(0)
 
   if args.username:
