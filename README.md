@@ -17,7 +17,9 @@
     <a href="https://pypi.org/project/ghs">
       <img src="https://img.shields.io/pypi/pyversions/ghs.svg" />
     </a>
-	  
+    <a href="https://pypi.org/project/ghs">
+      <img src="https://img.shields.io/pypi/dm/ghs" />
+    </a>
   </p>
 </p>
 
