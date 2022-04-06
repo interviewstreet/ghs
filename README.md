@@ -18,7 +18,10 @@
       <img src="https://img.shields.io/pypi/pyversions/ghs.svg" />
     </a>
     <a href="https://pypi.org/project/ghs">
-      <img src="https://img.shields.io/pypi/dm/ghs" />
+      <img src="https://pepy.tech/badge/ghs" />
+    </a>
+    <a href="https://pypi.org/project/ghs">
+      <img src="https://pepy.tech/badge/ghs/month" />
     </a>
   </p>
 </p>
