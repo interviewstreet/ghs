@@ -80,7 +80,7 @@ python -m venv venv
 
 3. Activate the virtual environment
    - For macOS and linux, run `source venv/bin/activate`
-   - For windows, run `venv\Scripts\activate.bat`
+   - For windows, run `.\venv\Scripts\activate`
 4. Install the cli by running the following command while you are in the project root
 
 ```
