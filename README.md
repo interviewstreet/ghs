@@ -17,7 +17,12 @@
     <a href="https://pypi.org/project/ghs">
       <img src="https://img.shields.io/pypi/pyversions/ghs.svg" />
     </a>
-	  
+    <a href="https://pypi.org/project/ghs">
+      <img src="https://pepy.tech/badge/ghs" />
+    </a>
+    <a href="https://pypi.org/project/ghs">
+      <img src="https://pepy.tech/badge/ghs/month" />
+    </a>
   </p>
 </p>
 
@@ -75,7 +80,7 @@ python -m venv venv
 
 3. Activate the virtual environment
    - For macOS and linux, run `source venv/bin/activate`
-   - For windows, run `venv\Scripts\activate.bat`
+   - For windows, run `.\venv\Scripts\activate`
 4. Install the cli by running the following command while you are in the project root
 
 ```bash
