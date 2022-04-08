@@ -1,0 +1,41 @@
+class BinaryTree{
+    public TreeNode root;
+    public class TreeNode{
+        TreeNode left;
+        TreeNode right;
+        int data;
+        public TreeNode(int data){
+            this.data=data;
+        }
+    }
+    public void createBinaryTree(){
+        TreeNode first = new TreeNode(1);
+        TreeNode sec = new TreeNode(2);
+
+        TreeNode thr = new TreeNode(3);
+
+        TreeNode fort = new TreeNode(4);
+        TreeNode fif = new TreeNode(5);
+        root=first;
+        first.left=sec;
+        first.right=thr;
+        sec.left=fort;
+        sec.right=fif;
+
+    }
+    public void preOrder(TreeNode root){
+        if(root==null)
+            return;
+
+        preOrder(root.left);
+
+        preOrder(root.right);
+        System.out.print(root.data+" ");
+    }
+
+    public static void main(String[] args) {
+        BinaryTree bt = new BinaryTree();
+        bt.createBinaryTree();
+        bt.preOrder(bt.root);
+    }
+}
