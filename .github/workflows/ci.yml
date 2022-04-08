@@ -35,7 +35,7 @@ jobs:
 
       - name: Install the project
         run: |
-          pip install .
+          pip3 install .
 
       - name: Lint with flake8
         run: |
