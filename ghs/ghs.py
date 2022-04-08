@@ -8,7 +8,7 @@ from halo import Halo
 from termcolor import cprint
 
 from ghs.__init__ import __version__
-from ghs.check_config import ValidationException, check_config_dir, save_token
+from ghs.check_config import ValidationException, check_config_dir
 from ghs.fetchers import (
     fetch_contribution_collection,
     fetch_contributors_count,
