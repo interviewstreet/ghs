@@ -68,13 +68,13 @@ This can be useful when you want to do a code contribution to this project. You 
 
 1. Clone the repository
 
-```
+```bash
 git clone https://github.com/interviewstreet/ghs.git
 ```
 
 2. Navigate to the project root and create a virtual environment
 
-```
+```bash
 python -m venv venv
 ```
 
@@ -83,7 +83,7 @@ python -m venv venv
    - For windows, run `.\venv\Scripts\activate`
 4. Install the cli by running the following command while you are in the project root
 
-```
+```bash
 pip install .
 ```
 
@@ -103,7 +103,7 @@ PS: Your Github PAT is not comprimised by ghs. Please read the [Privacy Notice](
 
 ## Usage
 
-```
+```bash
 ghs [options]
 ```
 
@@ -115,6 +115,13 @@ ghs [options]
 | `-s` `--summary`           | Print the summary of the user. The username should be provided using the `-u` flag. |
 | `-c` `--copy-to-clipboard` | Copy the output to clipboard. Can be used with `-u` or `-s`.                        |
 | `-h` `--help`              | Show the help message of the cli                                                    |
+
+## Docker
+
+```bash
+docker build -t ghs:latest .
+docker run -it ghs ghs --help
+```
 
 ## Examples
 

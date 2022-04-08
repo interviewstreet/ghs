@@ -1,5 +1,5 @@
 def general_stats_query(username):
-  query = """{
+    query = """{
     search(query: USERNAME, type: USER, first: 10) {
       nodes {
         ... on User {
@@ -51,13 +51,15 @@ def general_stats_query(username):
       }
     }
   }
-  """.replace("USERNAME", '"{}"'.format(username))
+  """.replace(
+        "USERNAME", '"{}"'.format(username)
+    )
 
-  return query
+    return query
 
 
 def contribution_years_query(username):
-  query = """{
+    query = """{
     search(query: USERNAME, type: USER, first: 1) {
       nodes {
         ... on User {
@@ -67,13 +69,15 @@ def contribution_years_query(username):
         }
       }
     }
-  }""".replace("USERNAME", '"{}"'.format(username))
+  }""".replace(
+        "USERNAME", '"{}"'.format(username)
+    )
 
-  return query
+    return query
 
 
 def contribution_collection_query(username, date):
-  query = """{
+    query = """{
     search(query: USERNAME, type: USER, first: 1) {
       nodes {
         ... on User {
@@ -105,13 +109,17 @@ def contribution_collection_query(username, date):
       }
     }
   }
-  """.replace("USERNAME", '"{}"'.format(username)).replace("DATE", '"{}"'.format(date))
+  """.replace(
+        "USERNAME", '"{}"'.format(username)
+    ).replace(
+        "DATE", '"{}"'.format(date)
+    )
 
-  return query
+    return query
 
 
 def total_commit_query(NAME, OWNER):
-  query = """
+    query = """
       {
         repository(name: NAME, owner: OWNER) {
           object(expression: "master") {
@@ -124,23 +132,27 @@ def total_commit_query(NAME, OWNER):
           }
         }
       }
-  """.replace("NAME", '"{}"'.format(NAME)).replace("OWNER", '"{}"'.format(OWNER))
+  """.replace(
+        "NAME", '"{}"'.format(NAME)
+    ).replace(
+        "OWNER", '"{}"'.format(OWNER)
+    )
 
-  return query
+    return query
 
 
 def viewer_query():
-  query = '''{
+    query = """{
         viewer {
           login
         }
-      }'''
+      }"""
 
-  return query
+    return query
 
 
 def user_id_query(username):
-  query = '''{
+    query = """{
     search(query: NAME, type: USER, first: 1) {
       nodes {
         ... on User {
@@ -149,6 +161,8 @@ def user_id_query(username):
       }
     }
   }
-  '''.replace("NAME", '"{}"'.format(username))
+  """.replace(
+        "NAME", '"{}"'.format(username)
+    )
 
-  return query
+    return query
