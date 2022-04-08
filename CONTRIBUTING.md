@@ -37,7 +37,3 @@ Contribution can be anything like (but not limited to) improving documentation, 
 ### Coding Style
 
 This project uses the [Black](https://black.readthedocs.io/en/stable/) code formatter for formatting the code. [Flake8](https://flake8.pycqa.org/en/latest/) is used for linting the code and validating the style and structure.
-
-#### Code Formatting
-
-- The project uses _autopep8_ as the code-formatter.
