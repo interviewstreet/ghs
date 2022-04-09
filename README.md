@@ -41,6 +41,7 @@ Jump to:
 - [Installation](#installation)
   - [Using pip](#using-pip)
   - [Using source code](#using-source-code)
+  - [Docker](#docker)
 - [Github PAT](#github-pat)
 - [Usage](#usage)
 - [Examples](#examples)
@@ -89,6 +90,13 @@ pip install .
 
 _Note_: You need to reinstall by running the pip command if you want the cli to pick up your code changes.
 
+## Docker
+
+```bash
+docker build -t ghs:latest .
+docker run -it ghs ghs --help
+```
+
 ## Github PAT
 
 Generate a Github personal access token (https://github.com/settings/tokens) and use the `ghs -t` command to save it in the config file. This will be used to make the API requests to Github. A happy side-effect of this is that your private contributions are also considered while generating the stats and the summary of your username.
@@ -115,13 +123,6 @@ ghs [options]
 | `-s` `--summary`           | Print the summary of the user. The username should be provided using the `-u` flag. |
 | `-c` `--copy-to-clipboard` | Copy the output to clipboard. Can be used with `-u` or `-s`.                        |
 | `-h` `--help`              | Show the help message of the cli                                                    |
-
-## Docker
-
-```bash
-docker build -t ghs:latest .
-docker run -it ghs ghs --help
-```
 
 ## Examples
 
