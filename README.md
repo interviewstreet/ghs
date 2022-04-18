@@ -107,7 +107,7 @@ Please make sure that you give the following scopes to the token:
 - `read:user`
 - `read:packages`
 
-PS: Your Github PAT is not comprimised by ghs. Please read the [Privacy Notice](#privacy-notice) to know more.
+PS: Your Github PAT is not compromised by ghs. Please read the [Privacy Notice](#privacy-notice) to know more.
 
 ## Usage
 
