@@ -32,6 +32,9 @@ def render_general_stats(username, general_stats, spinner):
     print(text, end="")
     output_text += text
 
+    if total_prs + total_contribution + total_issues + total_repositories + total_stars + total_forks + total_packages + total_releases == 0:
+        output_text += render_private_profile_warning(username)
+
     output_text += render_generated_on()
 
     return output_text
@@ -41,6 +44,12 @@ def render_generated_on():
     today = datetime.datetime.now().strftime("%d-%b-%Y")
     text = f"\ngenerated on: {today}"
     cprint(text, "green")
+    return text
+
+
+def render_private_profile_warning(username):
+    text = f"\nIt's possible that {username} has made their contributions private. Use {username}'s token token to get their correct contributions stats."
+    cprint(text, "yellow")
     return text
 
 
@@ -108,7 +117,7 @@ def render_user_summary(
     output_text += text
     cprint(text, color="cyan")
     if total_commit_contributions == 0:
-        text = "No code contribution during this period\n"
+        text = "No public code contribution during this period\n"
         print(text, end="")
         output_text += text
     else:
