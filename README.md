@@ -49,6 +49,7 @@ Jump to:
   - [Environment error](#could-not-install-package-due-to-environment-error)
   - [ghs command not found](#ghs-command-not-found-even-after-installing)
 - [How to contribute?](#how-to-contribute)
+- [Steps for pushing a new update](#steps-for-pushing-a-new-update)
 - [Changelog](#changelog)
 - [Privacy Notice](#privacy-notice)
 - [License](#license)
@@ -165,6 +166,53 @@ Most likely the place where the command is installed is not in the system [PATH]
 ## How to contribute?
 
 Please see [Contributing guidelines](https://github.com/interviewstreet/ghs/blob/master/CONTRIBUTING.md) for more information.
+
+## Steps for pushing a new update
+
+1. Bump the version in `ghs/__init__.py` (we follow semantic versioning).
+
+2. Create an annotated tag for this commit with the version name `git tag -a v1.2.3 -m "v1.2.3"`. You can use this to publish a new release on the project's github page and the same can be used for maintaining the changelog.
+
+3. Make sure you have [twine](https://pypi.org/project/twine/) and [build](https://pypi.org/project/build/) installed.
+
+```
+pip install build twine
+```
+
+3. Build the package
+
+```
+python -m build
+```
+
+This will create a source archive and a wheel inside the `dist` folder. You can inspect them to make sure that they contain the correct files.
+
+4. Run twine sanity on the build files
+
+```
+twine check dist/*
+```
+
+5. First push the package on [TestPyPi](https://test.pypi.org/) so that you can test the updates without affecting the real PyPI index
+
+```
+twine upload -r testpypi dist/*
+
+```
+
+> Get the credentials for hackerrank dev PyPI account from karthik.
+
+Twine will list the package url on TestPyPI. You can test and confirm your changes by installing the package.
+
+6. Finally, run the following command to upload the package to PyPI
+
+```
+twine upload dist/*
+```
+
+> Get the credentials for hackerrank PyPI account from karthik.
+
+7. Treat yourself with a scoop of tender coconut.
 
 ## Changelog
 
