@@ -1,3 +1,4 @@
+from typing import Any, Dict, List, Optional
 import requests
 from requests import Session
 from retry_requests import retry
@@ -14,7 +15,7 @@ from ghs.utils import get_headers
 my_session = retry(Session(), retries=2, backoff_factor=10)
 
 
-def fetch_oldest_contribution_year(username):
+def fetch_oldest_contribution_year(username: str) -> int:
     with my_session.post(
         "https://api.github.com/graphql",
         json={"query": contribution_years_query(username)},
@@ -31,7 +32,7 @@ def fetch_oldest_contribution_year(username):
         raise Exception(f"Query failed with status code: {request.status_code}")
 
 
-def fetch_contributors_count(repo_owner, repo_name):
+def fetch_contributors_count(repo_owner: str, repo_name: str) -> Optional[str]:
     resp = requests.get(
         f"https://api.github.com/repos/{repo_owner}/{repo_name}/contributors?per_page=1&anon=true",
         headers=get_headers(),
@@ -46,7 +47,7 @@ def fetch_contributors_count(repo_owner, repo_name):
         return None
 
 
-def fetch_contribution_collection(username, start_date):
+def fetch_contribution_collection(username: str, start_date: str) -> List[Any]:
     with my_session.post(
         "https://api.github.com/graphql",
         json={"query": contribution_collection_query(username, start_date)},
@@ -79,7 +80,7 @@ def fetch_contribution_collection(username, start_date):
     ]
 
 
-def fetch_total_repo_commits(repo_name, repo_owner):
+def fetch_total_repo_commits(repo_name: str, repo_owner: str) -> Optional[int]:
     with my_session.post(
         "https://api.github.com/graphql",
         json={"query": total_commit_query(repo_name, repo_owner)},
@@ -96,7 +97,7 @@ def fetch_total_repo_commits(repo_name, repo_owner):
     return result["data"]["repository"]["object"]["history"]["totalCount"]
 
 
-def fetch_general_stats(username):
+def fetch_general_stats(username: str) -> Dict[str, Any]:
     with my_session.post(
         "https://api.github.com/graphql",
         json={"query": general_stats_query(username)},
@@ -111,7 +112,7 @@ def fetch_general_stats(username):
         raise Exception(f"Query failed with status code: {request.status_code}")
 
 
-def fetch_user_id(username):
+def fetch_user_id(username: str) -> Optional[str]:
     with my_session.post(
         "https://api.github.com/graphql",
         json={"query": user_id_query(username)},

@@ -1,13 +1,14 @@
 import argparse
 import datetime
 import traceback
+from typing import Any, Dict, List
 
 import colorama
 import pyperclip
 from halo import Halo
 from termcolor import cprint
 
-from ghs.__init__ import __version__
+from ghs import __version__
 from ghs.check_config import ValidationException, check_config_dir, save_token
 from ghs.fetchers import (
     fetch_contribution_collection,
@@ -29,13 +30,13 @@ colorama.init()
 spinner = Halo(text="Loading", spinner="dots")
 
 
-def verify_github_username(username):
+def verify_github_username(username: str) -> None:
     if fetch_user_id(username) is None:
         raise ValidationException(f"Error: {username} is not a valid github username")
     spinner.stop()
 
 
-def general_stats(username):
+def general_stats(username: str) -> str:
     spinner.start()
     verify_github_username(username)
     spinner.start()
@@ -43,7 +44,7 @@ def general_stats(username):
     return render_general_stats(username, general_stats, spinner)
 
 
-def validate_start_and_end_duration(start_duration, end_duration):
+def validate_start_and_end_duration(start_duration: str, end_duration: str) -> None:
     if not start_duration.isdigit() or not end_duration.isdigit():
         raise ValidationException("Error: duration not provided in the desired format")
 
@@ -56,7 +57,7 @@ def validate_start_and_end_duration(start_duration, end_duration):
         raise ValidationException("Error: the year gap is too big")
 
 
-def user_summary(username, durations, choice):
+def user_summary(username: str, durations: List[str], choice: int) -> str:
     text = ""
     if choice == 1:
         text = f"\nGithub summary of {username} for the past 12 months.\n"
@@ -89,7 +90,7 @@ def user_summary(username, durations, choice):
 
         start_duration = start_duration.strip()
         end_duration = end_duration.strip()
-        if end_duration == "present" and choice is not 1:
+        if end_duration == "present" and choice != 1:
             end_duration = f"{datetime.date.today().year + 1}"
 
         (
@@ -97,7 +98,8 @@ def user_summary(username, durations, choice):
             total_pull_request_contributions,
             total_pull_request_review_contributions,
         ) = [0, 0, 0]
-        user_contribution_repos, top_contribution_data = [{}, {}]
+        user_contribution_repos: Dict[str, Any] = {}
+        top_contribution_data: Dict[str, Any] = {}
 
         if choice == 1:
             contribution_collection = [
@@ -271,7 +273,7 @@ def main():
                     if val == datetime.date.today().year:
                         durations += f"{val}-present"
                     else:
-                        durations += f"{val}-{val+1},"
+                        durations += f"{val}-{val + 1},"
             elif choice == 3:
                 durations = input(
                     "Enter year duration in this format -> 2017-2019,2019-2021,2021-present: "
@@ -288,7 +290,7 @@ def main():
         raise ValidationException("Error: username not provided")
 
 
-def main_proxy():
+def main_proxy() -> None:
     try:
         main()
     except ValidationException as e:

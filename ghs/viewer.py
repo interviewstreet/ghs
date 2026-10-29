@@ -1,11 +1,15 @@
+import datetime
+from typing import Any, Dict, List
+
 import colorama
 from termcolor import cprint
-import datetime
 
 colorama.init()
 
 
-def render_general_stats(username, general_stats, spinner):
+def render_general_stats(
+    username: str, general_stats: Dict[str, Any], spinner: Any
+) -> str:
     total_prs = general_stats["pullRequests"]["totalCount"]
     total_contribution = general_stats["repositoriesContributedTo"]["totalCount"]
     total_repositories = general_stats["repositories"]["totalCount"]
@@ -50,20 +54,20 @@ def render_general_stats(username, general_stats, spinner):
     return output_text
 
 
-def render_generated_on():
+def render_generated_on() -> str:
     today = datetime.datetime.now().strftime("%d-%b-%Y")
     text = f"\ngenerated on: {today}"
     cprint(text, "green")
     return text
 
 
-def render_private_profile_warning(username):
+def render_private_profile_warning(username: str) -> str:
     text = f"\nIt's possible that {username} has made their contributions private. Use {username}'s token token to get their correct contributions stats."
     cprint(text, "yellow")
     return text
 
 
-def _render_top_contribution(top_contribution_data):
+def _render_top_contribution(top_contribution_data: Dict[str, Any]) -> str:
     text = f"\nYour Top Contributions:\n"
     print(text)
     output_text = text
@@ -114,15 +118,15 @@ def _render_top_contribution(top_contribution_data):
 
 
 def render_user_summary(
-    start_duration,
-    end_duration,
-    top_contribution_data,
-    output_text,
-    repos,
-    total_commit_contributions,
-    total_pull_request_contributions,
-    total_pull_request_review_contributions,
-):
+    start_duration: str,
+    end_duration: str,
+    top_contribution_data: Dict[str, Any],
+    output_text: str,
+    repos: List[Any],
+    total_commit_contributions: int,
+    total_pull_request_contributions: int,
+    total_pull_request_review_contributions: int,
+) -> str:
     text = f"\n{start_duration} - {end_duration}\n"
     output_text += text
     cprint(text, color="cyan")

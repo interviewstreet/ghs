@@ -1,5 +1,6 @@
 import configparser
 import os
+from typing import Dict, List, Optional
 import requests
 
 import colorama
@@ -17,11 +18,11 @@ spinner = Halo(text="Checking if the token is valid", spinner="dots")
 my_session = retry(Session(), retries=2, backoff_factor=10)
 
 
-def config_dir_path():
+def config_dir_path() -> str:
     return os.path.join(home_dir, ".ghs")
 
 
-def config_file_path():
+def config_file_path() -> str:
     return os.path.join(config_dir_path(), "ghs.config")
 
 
@@ -29,7 +30,7 @@ class ValidationException(Exception):
     pass
 
 
-def check_config_dir(spnr):
+def check_config_dir(spnr: Halo) -> bool:
     try:
         path = config_dir_path()
         # makes path recursively. returns None if already exist.
@@ -43,7 +44,7 @@ def check_config_dir(spnr):
     return True
 
 
-def create_config_file():
+def create_config_file() -> bool:
     cprint(
         "Creating config file",
         color="green",
@@ -53,7 +54,7 @@ def create_config_file():
 
 
 # TODO: move this to fetchers after resolving circular imports
-def fetch_token_scopes(headers):
+def fetch_token_scopes(headers: Dict[str, str]) -> Optional[List[str]]:
     resp = requests.get(f"https://api.github.com/rate_limit", headers=headers)
 
     if "X-OAuth-Scopes" in resp.headers.keys():
@@ -63,7 +64,7 @@ def fetch_token_scopes(headers):
         return None
 
 
-def validate_token_scopes(headers):
+def validate_token_scopes(headers: Dict[str, str]) -> None:
     required_scopes = ["read:user", "repo", "read:packages"]
     token_scopes = fetch_token_scopes(headers)
     if token_scopes is None or not set(required_scopes).issubset(token_scopes):
@@ -72,7 +73,7 @@ def validate_token_scopes(headers):
         )
 
 
-def save_token():
+def save_token() -> bool:
     pat = input("please enter your github pat: ")
 
     headers = {
@@ -104,6 +105,6 @@ def save_token():
         raise ValidationException("Error in saving the pat")
 
 
-def get_saved_token():
+def get_saved_token() -> str:
     config.read(config_file_path())
     return config["TOKEN"]["pat"]

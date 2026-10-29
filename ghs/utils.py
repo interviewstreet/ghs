@@ -1,4 +1,6 @@
+import datetime
 import random
+from typing import Any, Dict, List, Optional
 from dateutil.relativedelta import relativedelta
 from ghs.check_config import get_saved_token
 
@@ -37,11 +39,11 @@ USER_AGENTS = [
 ]
 
 
-def get_random_user_agent():
+def get_random_user_agent() -> str:
     return USER_AGENTS[random.randint(0, len(USER_AGENTS) - 1)]
 
 
-def get_headers():
+def get_headers() -> Dict[str, str]:
     headers = {
         "Authorization": f"token {get_saved_token()}",
         "User-Agent": get_random_user_agent(),
@@ -49,15 +51,15 @@ def get_headers():
     return headers
 
 
-def subtract_years(date, years):
+def subtract_years(date: datetime.datetime, years: int) -> str:
     return format_date_object((date - relativedelta(years=years)))
 
 
-def format_date_object(date):
+def format_date_object(date: datetime.datetime) -> str:
     return date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def let_user_pick(options):
+def let_user_pick(options: List[str]) -> Optional[int]:
     print("Please choose:")
     for idx, element in enumerate(options):
         print("{}) {}".format(idx + 1, element))
@@ -70,7 +72,9 @@ def let_user_pick(options):
     return None
 
 
-def parse_user_contribution_repos(repos, user_contribution_repos):
+def parse_user_contribution_repos(
+    repos: List[Dict[str, Any]], user_contribution_repos: Dict[str, Dict[str, Any]]
+) -> Dict[str, Dict[str, Any]]:
     for repo in repos[:5]:
         commits_count = repo["contributions"]["totalCount"]
         repo_name = repo["repository"]["name"]
