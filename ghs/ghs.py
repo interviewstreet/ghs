@@ -89,7 +89,7 @@ def user_summary(username, durations, choice):
 
         start_duration = start_duration.strip()
         end_duration = end_duration.strip()
-        if end_duration == "present" and choice is not 1:
+        if end_duration == "present" and choice != 1:
             end_duration = f"{datetime.date.today().year + 1}"
 
         (
@@ -139,19 +139,15 @@ def user_summary(username, durations, choice):
                 total_pull_request_review_contributions,
             ]
 
-        commit_count_repo_name_mapping = {}
-        for repo_name in user_contribution_repos.keys():
-            commit_count_repo_name_mapping[
-                user_contribution_repos[repo_name]["commits_count"]
-            ] = repo_name
-
-        sorted_commit_counts = sorted(
-            list(commit_count_repo_name_mapping.keys()), reverse=True
+        sorted_repos = sorted(
+            user_contribution_repos.items(),
+            key=lambda item: item[1]["commits_count"],
+            reverse=True,
         )
 
-        for commits_count in sorted_commit_counts:
-            repo_name = commit_count_repo_name_mapping[commits_count]
-            repo = user_contribution_repos[repo_name]
+        for repo_name, repo in sorted_repos:
+            commits_count = repo["commits_count"]
+
             repo_owner, languages, is_private, stargazer_count, fork_count = (
                 repo["owner"],
                 repo["languages"],
@@ -271,7 +267,7 @@ def main():
                     if val == datetime.date.today().year:
                         durations += f"{val}-present"
                     else:
-                        durations += f"{val}-{val+1},"
+                        durations += f"{val}-{val + 1},"
             elif choice == 3:
                 durations = input(
                     "Enter year duration in this format -> 2017-2019,2019-2021,2021-present: "

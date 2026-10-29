@@ -89,11 +89,16 @@ def fetch_total_repo_commits(repo_name, repo_owner):
 
     if request.status_code == 200:
         result = request.json()
-
-    if result["data"]["repository"]["object"] == None:
+    else:
         return None
 
-    return result["data"]["repository"]["object"]["history"]["totalCount"]
+    repository = (
+        result.get("data", {}).get("repository") if isinstance(result, dict) else None
+    )
+    if not repository or repository.get("object") is None:
+        return None
+
+    return repository["object"]["history"]["totalCount"]
 
 
 def fetch_general_stats(username):

@@ -58,7 +58,7 @@ def render_generated_on():
 
 
 def render_private_profile_warning(username):
-    text = f"\nIt's possible that {username} has made their contributions private. Use {username}'s token token to get their correct contributions stats."
+    text = f"\nIt's possible that {username} has made their contributions private. Use {username}'s token to get their correct contributions stats."
     cprint(text, "yellow")
     return text
 
@@ -76,7 +76,7 @@ def _render_top_contribution(top_contribution_data):
         repo_owner = top_contribution_data[i]["repo_owner"]
         total_commits = top_contribution_data[i]["total_commits"]
         contributors_count = top_contribution_data[i]["contributors_count"]
-        individual_commit_countribution = top_contribution_data[i][
+        individual_commit_contribution = top_contribution_data[i][
             "individual_commit_contribution"
         ]
         languages = top_contribution_data[i]["languages"]
@@ -106,7 +106,7 @@ def _render_top_contribution(top_contribution_data):
             print(text, end="")
             output_text += text
 
-        text = f"\t * During this period you made {individual_commit_countribution} commits to this repo.\n\t * Top languages of the repo {languages}.\n"
+        text = f"\t * During this period you made {individual_commit_contribution} commits to this repo.\n\t * Top languages of the repo {languages}.\n"
         print(text, end="")
         output_text += text
 
