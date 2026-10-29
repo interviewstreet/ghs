@@ -122,8 +122,12 @@ def render_user_summary(
     total_commit_contributions,
     total_pull_request_contributions,
     total_pull_request_review_contributions,
+    role=None,
 ):
-    text = f"\n{start_duration} - {end_duration}\n"
+    if role:
+        text = f"\n{start_duration} - {end_duration} ({role})\n"
+    else:
+        text = f"\n{start_duration} - {end_duration}\n"
     output_text += text
     cprint(text, color="cyan")
     if total_commit_contributions == 0:

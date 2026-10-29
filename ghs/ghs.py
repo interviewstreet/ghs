@@ -77,6 +77,11 @@ def user_summary(username, durations, choice):
     for duration in durations:
         spinner.start()
         duration = duration.strip()
+        role = None
+        if ":" in duration:
+            duration_part, role = duration.split(":", 1)
+            duration = duration_part.strip()
+            role = role.strip()
         if choice == 1:
             start_duration, end_duration = duration.split("#")
         elif choice == 2 or choice == 3:
@@ -89,7 +94,7 @@ def user_summary(username, durations, choice):
 
         start_duration = start_duration.strip()
         end_duration = end_duration.strip()
-        if end_duration == "present" and choice is not 1:
+        if end_duration == "present" and choice != 1:
             end_duration = f"{datetime.date.today().year + 1}"
 
         (
@@ -190,6 +195,7 @@ def user_summary(username, durations, choice):
             top_contribution_data,
             output_text,
             *contribution_collection,
+            role=role,
         )
 
     output_text += render_generated_on()
@@ -273,9 +279,12 @@ def main():
                     else:
                         durations += f"{val}-{val+1},"
             elif choice == 3:
-                durations = input(
-                    "Enter year duration in this format -> 2017-2019,2019-2021,2021-present: "
+                prompt_msg = (
+                    "Enter year duration in this format -> "
+                    "2017-2019:Role,2019-2021:Role,2021-present:Role "
+                    "(roles optional): "
                 )
+                durations = input(prompt_msg)
 
             output_text = user_summary(args.username, durations.split(","), choice)
             if args.copy_to_clipboard:
