@@ -2,6 +2,7 @@ import requests
 from requests import Session
 from retry_requests import retry
 
+from ghs.check_config import ValidationException
 from ghs.es_queries import (
     contribution_collection_query,
     contribution_years_query,
@@ -24,9 +25,17 @@ def fetch_oldest_contribution_year(username):
 
     if request.status_code == 200:
         result = request.json()
-        return result["data"]["search"]["nodes"][0]["contributionsCollection"][
-            "contributionYears"
-        ][-1]
+        nodes = result.get("data", {}).get("search", {}).get("nodes", [])
+        if not nodes:
+            raise ValidationException(f"No contribution data found for user {username}")
+        years = (
+            nodes[0]
+            .get("contributionsCollection", {})
+            .get("contributionYears", [])
+        )
+        if not years:
+            raise ValidationException(f"No contribution years found for user {username}")
+        return years[-1]
     else:
         raise Exception(f"Query failed with status code: {request.status_code}")
 
@@ -54,22 +63,27 @@ def fetch_contribution_collection(username, start_date):
     ) as result:
         request = result
 
-    if request.status_code == 200:
-        result = request.json()
-    else:
+    if request.status_code != 200:
         raise Exception(f"Query failed with status code: {request.status_code}")
 
-    contribution_collection = result["data"]["search"]["nodes"][0][
-        "contributionsCollection"
-    ]
-    repos = contribution_collection["commitContributionsByRepository"]
-    total_commit_contributions = contribution_collection["totalCommitContributions"]
-    total_pull_request_contributions = contribution_collection[
-        "totalPullRequestContributions"
-    ]
-    total_pull_request_review_contributions = contribution_collection[
-        "totalPullRequestReviewContributions"
-    ]
+    result = request.json()
+    nodes = result.get("data", {}).get("search", {}).get("nodes", [])
+    if not nodes:
+        raise ValidationException(
+            f"No contribution collection found for user {username}"
+        )
+
+    contribution_collection = nodes[0].get("contributionsCollection", {})
+    repos = contribution_collection.get("commitContributionsByRepository", [])
+    total_commit_contributions = contribution_collection.get(
+        "totalCommitContributions", 0
+    )
+    total_pull_request_contributions = contribution_collection.get(
+        "totalPullRequestContributions", 0
+    )
+    total_pull_request_review_contributions = contribution_collection.get(
+        "totalPullRequestReviewContributions", 0
+    )
 
     return [
         repos,
@@ -87,13 +101,19 @@ def fetch_total_repo_commits(repo_name, repo_owner):
     ) as result:
         request = result
 
-    if request.status_code == 200:
-        result = request.json()
-
-    if result["data"]["repository"]["object"] == None:
+    if request.status_code != 200:
         return None
 
-    return result["data"]["repository"]["object"]["history"]["totalCount"]
+    result = request.json()
+    repo = (
+        result.get("data", {}).get("repository")
+        if isinstance(result, dict)
+        else None
+    )
+    if not repo or not repo.get("object"):
+        return None
+
+    return repo["object"].get("history", {}).get("totalCount")
 
 
 def fetch_general_stats(username):
@@ -106,7 +126,10 @@ def fetch_general_stats(username):
 
     if request.status_code == 200:
         result = request.json()
-        return result["data"]["search"]["nodes"][0]
+        nodes = result.get("data", {}).get("search", {}).get("nodes", [])
+        if not nodes:
+            raise ValidationException(f"User {username} not found")
+        return nodes[0]
     else:
         raise Exception(f"Query failed with status code: {request.status_code}")
 
@@ -121,9 +144,9 @@ def fetch_user_id(username):
 
     if request.status_code == 200:
         result = request.json()
-        if len(result["data"]["search"]["nodes"]) == 0:
+        nodes = result.get("data", {}).get("search", {}).get("nodes", [])
+        if not nodes:
             return None
-        else:
-            return result["data"]["search"]["nodes"][0]["id"]
+        return nodes[0].get("id")
     else:
         raise Exception(f"Query failed with status code: {request.status_code}")

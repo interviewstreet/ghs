@@ -271,7 +271,7 @@ def main():
                     if val == datetime.date.today().year:
                         durations += f"{val}-present"
                     else:
-                        durations += f"{val}-{val+1},"
+                        durations += f"{val}-{val + 1},"
             elif choice == 3:
                 durations = input(
                     "Enter year duration in this format -> 2017-2019,2019-2021,2021-present: "
